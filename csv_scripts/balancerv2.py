@@ -1,9 +1,10 @@
 import csv
 
+from web3 import Web3
 from typing import Optional
 
 from thegraph import run_graph_query
-from csv_scripts.constants import BALANCERV2_CSV_PATH
+from constants import BALANCERV2_CSV_PATH
 
 
 def fetch_balancerv2_pools(graph_url: Optional[str] = None, chain="ethereum") -> None:
@@ -15,7 +16,7 @@ def fetch_balancerv2_pools(graph_url: Optional[str] = None, chain="ethereum") ->
 
     for pool in pools:
         pool_address = pool["address"]
-        pool_addresses.append(pool_address)
+        pool_addresses.append(Web3.to_checksum_address(pool_address))
 
     while len(pools) == 1000:
         count += 1
@@ -24,7 +25,7 @@ def fetch_balancerv2_pools(graph_url: Optional[str] = None, chain="ethereum") ->
 
         for pool in pools:
             pool_address = pool["address"]
-            pool_addresses.append(pool_address)
+            pool_addresses.append(Web3.to_checksum_address(pool_address))
 
     with open(BALANCERV2_CSV_PATH.format(chain), "w") as file:
         csv_writer = csv.writer(file)
